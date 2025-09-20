@@ -1,0 +1,29 @@
+services:
+  django:
+    build: ./gulai-web
+    container_name: django_dev
+    working_dir: /app
+    volumes:
+      - ./gulai-web:/app  # mount Django code to docker container FS
+    ports:
+      - "8000:8000"             # Django dev server at http://localhost:8000
+    environment:
+      - DATABASE_URL=postgres://gulai_dev:password@db:5432/gulai_dev_db
+      -  MEDIA_ROOT=gulai-django/
+    depends_on:
+      - db
+ 
+  db:
+    image: postgres:13
+    container_name: postgres_dev
+    restart: always
+    environment:
+      - POSTGRES_DB=gulai_dev_db
+      - POSTGRES_USER=gulai_dev
+      - POSTGRES_PASSWORD=password
+ 
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+ 
+volumes:
+  pgdata_dev:
